@@ -1,0 +1,160 @@
+---
+title: My dynamic report
+output: html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+
+```
+
+```{css}
+@import url('https://fonts.googleapis.com/css2?family=TikTok+Sans:opsz,wght@12..36,300..900&display=swap');
+
+h2, body {
+  font-family: "TikTok Sans", sans-serif;
+}
+
+h2 {
+  padding: 15px;
+  text-align: center;
+  color: white;
+  text-shadow: 
+    -2px -2px 0 #25F4EE, 
+     2px  2px 0 #FE2C55;
+}
+
+body {
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 20px; 
+  max-width: 640px;
+  margin: 0 auto;
+}
+img {
+  margin: 15px auto;
+}
+h2, img {
+  border-bottom: 2px solid #ffffff;
+  padding-bottom: 15px;
+}
+
+```
+
+## What are people liking on TikTok?
+
+
+This data represents the type of content people will like on TikTok. It recored the format, length/amount, and genre of the TikTok.
+
+```{r}
+library(tidyverse)
+
+logged_data <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTlVgm_T1HIDlWv3WzEI7-rm0o3o7kfVieeefnsT1ZzKRQFVWwiyBITTf-iVdmnOH4kAhznFxitjXzN/pub?output=csv")
+
+latest_data <- logged_data %>%
+  rename(timestamp = 1, 
+         format = 2, 
+         video_length = 3, 
+         photo_amount = 4, 
+         genre = 5, 
+         url = 6)
+
+total_observations <- nrow(latest_data)
+
+#select only video TikToks and remove NA entries
+video_data <- latest_data %>% 
+  select(format, video_length, genre, url) %>% 
+  drop_na(video_length)
+
+#select only photo TikToks and remove NA entries
+photo_data <- latest_data %>% 
+  select(format, photo_amount, genre, url) %>% 
+  drop_na(photo_amount)
+
+#median values of formats
+median_video_length <- median(video_data$video_length)
+median_photo_amount <- median(photo_data$photo_amount)
+
+#most common formt and genre
+most_common_genre <- latest_data %>% 
+  count(genre, sort = TRUE) %>% 
+  slice(1)
+
+most_common_format <- latest_data %>% 
+  count(format, sort = TRUE) %>% 
+  slice(1)
+
+
+```
+
+From **`r total_observations`** observations, the median video length for video TikToks from the observations was **`r round(median_video_length, 1)`** seconds and the median photo amount for photo TikToks from the observations was **`r round(median_photo_amount, 1)`** photos.
+
+The graph below shows the distribution of video and photo TikToks. The graph shows **`r most_common_format[1]`** was the most common format with **`r most_common_format[2]`** observations.
+
+```{r}
+#set graph theme
+theme_set(
+  theme(
+    #change background to black
+    panel.background = element_rect(fill = "black", colour = "black"),
+    plot.background = element_rect(fill = "black"),
+    
+    #change all text to white
+    plot.title = element_text(colour = "white", face = "bold"),
+    plot.subtitle = element_text(colour = "white"),
+    text = element_text(colour = "white", face = "bold"),
+    axis.title = element_text(colour = "white", face = "bold"),
+    axis.text.x = element_text(colour = "white", face = "bold"),
+    axis.text.y = element_text(colour = "white", face = "bold"),
+    
+    #change legend background to black
+    legend.background = element_rect(fill = "black"),
+    legend.key = element_rect(fill = "black"),
+    
+    #remove the x axis grid lines
+    panel.grid.major.x = element_blank()))
+
+
+#format of TikToks
+latest_data %>%
+  ggplot() + 
+    geom_bar(
+      aes(x = format, fill = format), 
+      show.legend = FALSE) +
+    labs(title = "Format of TikToks", 
+     subtitle = "The format of TikTok that was submitted",
+     x = "Format",
+     y = "Count")
+```
+
+The graph below shows the distribution of genres from the TikToks. The data shows **`r most_common_genre[1]`** was the most common genre with **`r most_common_genre[2]`** observations.
+
+```{r}
+#genre of TikToks
+latest_data %>% 
+  ggplot() + 
+  geom_bar(
+    aes(x = genre, fill = genre), 
+    show.legend = FALSE) + 
+  labs(
+    title = "Genre of TikToks", 
+    subtitle = "Type of genre that best describes the TikTok",
+    x = "Genre",
+    y = "Count")
+```
+
+The graph below shows the same graph above of genre distribution but filled by the format of the TikToks. This type of graph can be useful because it shows how some genres can be either video or photo, and/or can show outliers where a genre can favour one format over the other.
+
+```{r}
+#genre of TikToks by format
+latest_data %>% 
+  ggplot() + 
+  geom_bar(
+    aes(x = genre, fill = format)) +
+  labs(
+    title = "Genre of TikTok by format of TikTok", 
+    subtitle = "How the genre of the TikTok compares to the format",
+    x = "Genre",
+    fill = "Format of TikTok",
+    y = "Count")
+```
