@@ -89,7 +89,7 @@ most_common_format <- latest_data %>%
 
 From **`r total_observations`** observations, the median video length for video TikToks from the observations was **`r round(median_video_length, 1)`** seconds and the median photo amount for photo TikToks from the observations was **`r round(median_photo_amount, 1)`** photos.
 
-The graph below shows the distribution of video and photo TikToks. The graph shows **`r most_common_format[1]`** was the most common format with **`r most_common_format[2]`** observations.
+The graph below shows the distribution of video and photo TikToks. The graph shows **`r most_common_format$format`** was the most common format with **`r most_common_format$n`** observations.
 
 ```{r}
 #set graph theme
@@ -127,7 +127,7 @@ latest_data %>%
      y = "Count")
 ```
 
-The graph below shows the distribution of genres from the TikToks. The data shows **`r most_common_genre[1]`** was the most common genre with **`r most_common_genre[2]`** observations.
+The graph below shows the distribution of genres from the TikToks. The data shows **`r most_common_genre$genre`** was the most common genre with **`r most_common_genre$n`** observations.
 
 ```{r}
 #genre of TikToks
