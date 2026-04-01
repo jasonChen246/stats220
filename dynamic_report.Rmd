@@ -9,10 +9,13 @@ knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
 ```
 
 ```{css}
-@import url('https://fonts.googleapis.com/css2?family=TikTok+Sans:opsz,wght@12..36,300..900&display=swap');
+@font-face {
+  font-family: 'tiktok';
+  src: url('TikTokSans-VariableFont_opsz,slnt,wdth,wght.ttf') format('truetype');
+}
 
 h2, body {
-  font-family: "TikTok Sans", sans-serif;
+  font-family: "tiktok", sans-serif;
 }
 
 h2 {
